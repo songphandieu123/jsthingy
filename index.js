@@ -1,5 +1,5 @@
 function Reroute(){
-    window.open("https://www.imagetotext.info/")
+    window.open("https://www.editpad.org/tool/extract-text-from-image")
 }
 
 function Main(){
@@ -155,7 +155,6 @@ function Main(){
             break
         }
     }
-    console.log(secondHalfMedianIndex)
     let secondHalfMedian = leftLimitArray[secondHalfMedianIndex] + (((dataArray.length * 3 / 4) - secondHalfLowerFrequency) / frequency[secondHalfMedianIndex]) * (rightLimitArray[secondHalfMedianIndex] - leftLimitArray[secondHalfMedianIndex])
     document.write("<br> Tứ phân vị thứ ba là: ", secondHalfMedian.toFixed(2))
 }    
