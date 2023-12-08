@@ -88,7 +88,6 @@ function Main(){
                 highestFrequencyIndex = i
             }
         }
-        console.log(highestFrequencyIndex)
         let mode = 0
         if(highestFrequencyIndex === 0){
             mode = leftLimitArray[highestFrequencyIndex] + (frequency[highestFrequencyIndex]) / (2 * frequency[highestFrequencyIndex] - frequency[highestFrequencyIndex + 1]) * (rightLimitArray[highestFrequencyIndex] - leftLimitArray[highestFrequencyIndex])
@@ -100,6 +99,25 @@ function Main(){
             mode = leftLimitArray[highestFrequencyIndex] + (frequency[highestFrequencyIndex] - frequency[highestFrequencyIndex - 1]) / (2 * frequency[highestFrequencyIndex] - frequency[highestFrequencyIndex - 1] - frequency[highestFrequencyIndex + 1]) * (rightLimitArray[highestFrequencyIndex] - leftLimitArray[highestFrequencyIndex])
         }
         document.write("<br> Mốt là: ", mode.toFixed(2))
+        let realMedianPosition = parseInt(dataArray.length / 2)
+        let medianIndex = 0
+        let lowerFrequency = frequency[0]
+        for(let i = 1; i < frequency.length; i++){
+            if(lowerFrequency < realMedianPosition){
+                lowerFrequency += frequency[i]
+            }
+            else{
+                medianIndex = i - 1
+                console.log("yes")
+                break
+            }
+        }
+        let median = leftLimitArray[medianIndex] + (((dataArray.length / 2) - lowerFrequency) / frequency[medianIndex]) * (rightLimitArray[medianIndex] - leftLimitArray[medianIndex])
+        document.write("<br> Trung vị là: ", median.toFixed(2))
+        let firstHalfMedian = leftLimitArray[medianIndex] + (((dataArray.length / 4) - lowerFrequency) / frequency[medianIndex]) * (rightLimitArray[medianIndex] - leftLimitArray[medianIndex])
+        document.write("<br> Tứ phân vị thứ nhất là: ", firstHalfMedian.toFixed(2))
+        let secondHalfMedian = leftLimitArray[medianIndex] + (((dataArray.length * 3 / 4) - lowerFrequency) / frequency[medianIndex]) * (rightLimitArray[medianIndex] - leftLimitArray[medianIndex])
+        document.write("<br> Tứ phân vị thứ nhất là: ", secondHalfMedian.toFixed(2))
     }    
     else{
         document.write(dataArray.length)
