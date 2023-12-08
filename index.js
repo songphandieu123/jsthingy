@@ -25,6 +25,9 @@ function Main(){
                 dataArray.push(parseFloat(data.substring(index, i)))
                 index = i
             }
+            else if(i === data.length - 1){
+                dataArray.push(parseFloat(data.substring(index, i)))
+            }
         }
     }
     else{
@@ -32,6 +35,9 @@ function Main(){
             if(whitespace.has(data[i])){
                 dataArray.push(parseInt(data.substring(index, i)))
                 index = i
+            }
+            else if(i === data.length - 1){
+                dataArray.push(parseFloat(data.substring(index, i)))
             }
         }
     }
@@ -42,89 +48,114 @@ function Main(){
     if(isNaN(firstValue)){
         firstValue = dataArray[0]
     }
-    if(Number.isInteger(dataArray.length / columnNumber)){
-        let span = dataArray[dataArray.length - 1] - dataArray[0]
-        let leftLimit = firstValue
-        let temp = span / columnNumber
-        let rightLimitArray = []
-        let leftLimitArray = []
-        for(let i = 0; i < columnNumber; i++){
-            if(i != 0){
-            leftLimit += parseFloat(temp.toFixed(1))
-            }
-            leftLimitArray.push(parseFloat(leftLimit.toFixed(1)))
-            let rightLimit = leftLimit + temp
-            rightLimitArray.push(parseFloat(rightLimit.toFixed(1)))
-            document.write("[", leftLimit.toFixed(1), "; ", rightLimit.toFixed(1), ") ")
+    let lastValue = parseFloat(document.getElementById("lastValue").value)
+    if(isNaN(lastValue)){
+        lastValue = dataArray[dataArray.length - 1]
+    }
+    let span = lastValue - firstValue
+    let leftLimit = firstValue
+    let temp = span / columnNumber
+    let rightLimitArray = []
+    let leftLimitArray = []
+    for(let i = 0; i < columnNumber; i++){
+        if(i != 0){
+        leftLimit += parseFloat(temp.toFixed(1))
         }
-        let rightLimitArrayIndex = 0
-        let frequency = []
-        let indexEnd = 0
-        for(let i = 0; i < dataArray.length; i++){
-            if(dataArray[i].toFixed(1) >= rightLimitArray[rightLimitArrayIndex].toFixed(1)){
-                rightLimitArrayIndex++
-                frequency.push(i - indexEnd)
-                indexEnd = i
-            }
-            if(i === dataArray.length - 1){
-                frequency.push(i + 1 - indexEnd)
-            }
+        leftLimitArray.push(parseFloat(leftLimit.toFixed(1)))
+        let rightLimit = leftLimit + temp
+        rightLimitArray.push(parseFloat(rightLimit.toFixed(1)))
+        document.write("[", leftLimit.toFixed(1), "; ", rightLimit.toFixed(1), ") ")
+    }
+    let rightLimitArrayIndex = 0
+    let frequency = []
+    let indexEnd = 0
+    for(let i = 0; i < dataArray.length; i++){
+        if(i === dataArray.length - 1 || rightLimitArrayIndex === columnNumber - 1){
+            frequency.push(dataArray.length - indexEnd)
+            break
         }
-        document.write("<br> Tần số lần lượt là: ",frequency.join("    "))
-        let representative = []
-        for(let i = 0; i < leftLimitArray.length; i++){
-            let temp = (leftLimitArray[i] + rightLimitArray[i]) / 2
-            representative.push(parseFloat(temp.toFixed(1)))
+        else if(dataArray[i] >= rightLimitArray[rightLimitArrayIndex]){
+            rightLimitArrayIndex++
+            frequency.push(i - indexEnd)
+            indexEnd = i
         }
-        let average = 0
-        for(let i = 0; i < representative.length; i++){
-            average += representative[i] * frequency[i]
+    }
+    document.write("<br> Tần số lần lượt là: ",frequency.join("    "))
+    let representative = []
+    for(let i = 0; i < leftLimitArray.length; i++){
+        let temp = (leftLimitArray[i] + rightLimitArray[i]) / 2
+        representative.push(parseFloat(temp.toFixed(1)))
+    }
+    let average = 0
+    for(let i = 0; i < representative.length; i++){
+        average += representative[i] * frequency[i]
+    }
+    average = average / dataArray.length
+    document.write("<br> Số trung bình là: ", average.toFixed(2))
+    let highestFrequencyIndex = 0
+    for(let i = 1; i < frequency.length; i++){
+        if(frequency[i] > frequency[highestFrequencyIndex]){
+            highestFrequencyIndex = i
         }
-        average = average / dataArray.length
-        document.write("<br> Số trung bình là: ", average.toFixed(2))
-        let highestFrequencyIndex = 0
-        for(let i = 1; i < frequency.length; i++){
-            if(frequency[i] > frequency[highestFrequencyIndex]){
-                highestFrequencyIndex = i
-            }
-        }
-        let mode = 0
-        if(highestFrequencyIndex === 0){
-            mode = leftLimitArray[highestFrequencyIndex] + (frequency[highestFrequencyIndex]) / (2 * frequency[highestFrequencyIndex] - frequency[highestFrequencyIndex + 1]) * (rightLimitArray[highestFrequencyIndex] - leftLimitArray[highestFrequencyIndex])
-        }
-        else if(highestFrequencyIndex === frequency.length - 1){
-            mode = leftLimitArray[highestFrequencyIndex] + (frequency[highestFrequencyIndex] - frequency[highestFrequencyIndex - 1]) / (2 * frequency[highestFrequencyIndex] - frequency[highestFrequencyIndex - 1]) * (rightLimitArray[highestFrequencyIndex] - leftLimitArray[highestFrequencyIndex]) 
+    }
+    let mode = 0
+    if(highestFrequencyIndex === 0){
+        mode = leftLimitArray[highestFrequencyIndex] + (frequency[highestFrequencyIndex]) / (2 * frequency[highestFrequencyIndex] - frequency[highestFrequencyIndex + 1]) * (rightLimitArray[highestFrequencyIndex] - leftLimitArray[highestFrequencyIndex])
+    }
+    else if(highestFrequencyIndex === frequency.length - 1){
+        mode = leftLimitArray[highestFrequencyIndex] + (frequency[highestFrequencyIndex] - frequency[highestFrequencyIndex - 1]) / (2 * frequency[highestFrequencyIndex] - frequency[highestFrequencyIndex - 1]) * (rightLimitArray[highestFrequencyIndex] - leftLimitArray[highestFrequencyIndex]) 
+    }
+    else{
+        mode = leftLimitArray[highestFrequencyIndex] + (frequency[highestFrequencyIndex] - frequency[highestFrequencyIndex - 1]) / (2 * frequency[highestFrequencyIndex] - frequency[highestFrequencyIndex - 1] - frequency[highestFrequencyIndex + 1]) * (rightLimitArray[highestFrequencyIndex] - leftLimitArray[highestFrequencyIndex])
+    }
+    document.write("<br> Mốt là: ", mode.toFixed(2))
+    let realMedianPosition = parseInt(dataArray.length / 2)
+    let medianIndex = 0
+    let LowerFrequency = frequency[0]
+    for(let i = 1; i < frequency.length; i++){
+        if(LowerFrequency < realMedianPosition){
+            LowerFrequency += frequency[i]
         }
         else{
-            mode = leftLimitArray[highestFrequencyIndex] + (frequency[highestFrequencyIndex] - frequency[highestFrequencyIndex - 1]) / (2 * frequency[highestFrequencyIndex] - frequency[highestFrequencyIndex - 1] - frequency[highestFrequencyIndex + 1]) * (rightLimitArray[highestFrequencyIndex] - leftLimitArray[highestFrequencyIndex])
+            LowerFrequency -= frequency[i - 1]
+            medianIndex = i - 1
+            break
         }
-        document.write("<br> Mốt là: ", mode.toFixed(2))
-        let realMedianPosition = parseInt(dataArray.length / 2)
-        let medianIndex = 0
-        let lowerFrequency = frequency[0]
-        for(let i = 1; i < frequency.length; i++){
-            if(lowerFrequency < realMedianPosition){
-                lowerFrequency += frequency[i]
-            }
-            else{
-                medianIndex = i - 1
-                console.log("yes")
-                break
-            }
-        }
-        let median = leftLimitArray[medianIndex] + (((dataArray.length / 2) - lowerFrequency) / frequency[medianIndex]) * (rightLimitArray[medianIndex] - leftLimitArray[medianIndex])
-        document.write("<br> Trung vị là: ", median.toFixed(2))
-        let firstHalfMedian = leftLimitArray[medianIndex] + (((dataArray.length / 4) - lowerFrequency) / frequency[medianIndex]) * (rightLimitArray[medianIndex] - leftLimitArray[medianIndex])
-        document.write("<br> Tứ phân vị thứ nhất là: ", firstHalfMedian.toFixed(2))
-        let secondHalfMedian = leftLimitArray[medianIndex] + (((dataArray.length * 3 / 4) - lowerFrequency) / frequency[medianIndex]) * (rightLimitArray[medianIndex] - leftLimitArray[medianIndex])
-        document.write("<br> Tứ phân vị thứ nhất là: ", secondHalfMedian.toFixed(2))
-    }    
-    else{
-        document.write(dataArray.length)
     }
-    /*for(let i = 0; i < da.ttaArray.length; i++){
-        document.write(dataArray[i], " ")
-    }*/
-}
-//73,4 72,1 72,9 70,2 70,9 72,2 71,5 72,5 69,3 72,3 69,7 72,3 71,5 71,2 69,8 72,3 71,1 69,5 72,2 71,9 73.1 71,6 71,3 72,2 71,8 70,8 72,2 72.2 72,9 72,7 70,7
-//4 2 7 12 5
+    let median = leftLimitArray[medianIndex] + (((dataArray.length / 2) - LowerFrequency) / frequency[medianIndex]) * (rightLimitArray[medianIndex] - leftLimitArray[medianIndex])
+    document.write("<br> Trung vị là: ", median.toFixed(2))
+    let firstHalfMedianPosition = parseInt(dataArray.length / 4)
+    let firstHalfMedianIndex = 0
+    let firstHalfLowerFrequency = frequency[0]
+    for(let i = 1; i < frequency.length; i++){
+        if(firstHalfLowerFrequency < firstHalfMedianPosition){
+            firstHalfLowerFrequency += frequency[i]
+        }
+        else{
+            firstHalfLowerFrequency -= frequency[i - 1]
+            firstHalfMedianIndex = i - 1
+            break
+        }
+    }
+    let firstHalfMedian = leftLimitArray[firstHalfMedianIndex] + (((dataArray.length / 4) - firstHalfLowerFrequency) / frequency[firstHalfMedianIndex]) * (rightLimitArray[firstHalfMedianIndex] - leftLimitArray[firstHalfMedianIndex])
+    document.write("<br> Tứ phân vị thứ nhất là: ", firstHalfMedian.toFixed(2))
+    let secondHalfMedianPosition = parseInt(dataArray.length * 3 / 4)
+    let secondHalfMedianIndex = 0
+    let secondHalfLowerFrequency = frequency[0]
+    for(let i = 1; i < frequency.length; i++){
+        if(i === frequency.length - 1){
+            secondHalfMedianIndex = frequency.length - 1
+        }
+        else if(secondHalfLowerFrequency < secondHalfMedianPosition){
+            secondHalfLowerFrequency += frequency[i]
+        }
+        else{
+            secondHalfLowerFrequency -= frequency[i - 1]
+            secondHalfMedianIndex = i - 1
+            break
+        }
+    }
+    console.log(secondHalfMedianIndex)
+    let secondHalfMedian = leftLimitArray[secondHalfMedianIndex] + (((dataArray.length * 3 / 4) - secondHalfLowerFrequency) / frequency[secondHalfMedianIndex]) * (rightLimitArray[secondHalfMedianIndex] - leftLimitArray[secondHalfMedianIndex])
+    document.write("<br> Tứ phân vị thứ ba là: ", secondHalfMedian.toFixed(2))
+}    
